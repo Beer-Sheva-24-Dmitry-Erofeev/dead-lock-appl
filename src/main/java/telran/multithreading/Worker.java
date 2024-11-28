@@ -9,16 +9,16 @@ public class Worker extends Thread {
 
     @Override
     public void run() {
-        f1();
-        f2();
+        // Такое количество итераций, чтобы статистически гарантировать deadlock
+        for (int i = 0; i < 100000; i++) {
+            f1();
+            f2();
+        }
+
     }
 
     private void f1() {
         synchronized (mutex1) {
-            try {
-                sleep(0);
-            } catch (InterruptedException e) {
-            }
             synchronized (mutex2) {
 
             }
@@ -27,13 +27,6 @@ public class Worker extends Thread {
 
     private void f2() {
         synchronized (mutex2) {
-            try {
-                sleep(100);
-                // "Работа" (sleep) нужна именно в методе f2(), Так мы отсрочиваем выполнение f2() и второй поток
-                // успевает в своём варианте f1() попытаться захватить f2(), что и вызывает deadlock.
-                // Во всяком случае я так это понимаю.
-            } catch (InterruptedException e) {
-            }
             synchronized (mutex1) {
 
             }
